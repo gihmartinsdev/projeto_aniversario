@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Feliz Aniversário 🎉</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  height:100vh;
+  overflow:hidden;
+  font-family:sans-serif;
+  background:linear-gradient(130deg,#ffd1dc,#fff3b0); /* fundo mais rosado/amarelado */
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  color:#fff;
+}
+
+/* CONFETE */
+.confetti{
+  position:absolute;
+  width:8px;height:8px;
+  top:-10px;
+  animation:fall linear forwards;
+}
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(720deg)}
+}
+
+/* BANDEIRAS PARABÉNS ENRICO */
+.flags{
+  position:absolute;
+  top:50px;
+  display:flex;
+  gap:5px;
+  z-index:1;
+}
+.flag{
+  width:30px;height:38px;
+  background:#ffd166;
+  color:#333;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  clip-path:polygon(0 0,100% 0,100% 75%,50% 100%,0 75%);
+}
+
+/* SETA */
+.arrow{
+  position:absolute;
+  top:180px;
+  font-weight:bold;
+  text-align:center;
+  animation:arrow 1s infinite;
+  z-index:2;
+}
+.arrow::after{
+  content:"⬇";
+  font-size:28px;
+  display:block;
+}
+@keyframes arrow{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(8px)}
+}
+
+/* BOLO */
+.cake{
+  position:relative;
+  width:220px;
+  height:220px;
+  margin-top:120px;
+  cursor:pointer;
+  z-index:1;
+}
+.pulse{
+  animation:pulse .6s infinite;
+}
+@keyframes pulse{
+  50%{transform:scale(1.08)}
+}
+
+/* CAMADAS DO BOLO */
+.layer{
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  border-radius:20px;
+}
+.l1{bottom:0;width:200px;height:80px;background:#ff8fab}
+.l2{bottom:70px;width:160px;height:60px;background:#ffd166}
+.l3{bottom:120px;width:120px;height:50px;background:#4ea8de}
+
+/* VELA */
+.candle{
+  position:absolute;
+  bottom:165px;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+}
+.flame{
+  width:12px;height:16px;
+  background:#ffdd55;
+  border-radius:50%;
+  margin:auto;
+  animation:flicker .2s infinite alternate;
+}
+.number{
+  font-size:26px;
+  font-weight:bold;
+}
+@keyframes flicker{
+  to{transform:scale(1.2)}
+}
+
+/* CARTA */
+.letter{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
+  z-index:5;
+}
+.letter.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.box{
+  background:#fff;
+  color:#333;
+  padding:20px;
+  border-radius:16px;
+  text-align:center;
+  max-width:400px;
+  transform:scale(.8);
+  transition:.3s;
+  z-index:6;
+}
+.letter.show .box{
+  transform:scale(1);
+}
+
+.box video{
+  width:100%;
+  border-radius:12px;
+  margin-top:10px;
+}
+
+button{
+  margin-top:10px;
+  padding:8px 16px;
+  border:none;
+  background:#ffd166;
+  border-radius:10px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- BANDEIRAS -->
+<div class="flags" id="flags"></div>
+
+<!-- SETA CLICA AQUI -->
+<div class="arrow">Clica aqui</div>
+
+<!-- BOLO -->
+<div class="cake" id="cake" onclick="startParty()">
+  <div class="layer l1"></div>
+  <div class="layer l2"></div>
+  <div class="layer l3"></div>
+
+  <div class="candle">
+    <div class="flame"></div>
+    <div class="number">23</div>
+  </div>
+</div>
+
+<!-- AUDIO -->
+<audio id="music" src="audio gato.mp3" preload="auto"></audio>
+
+<!-- CARTA -->
+<div class="letter" id="letter">
+  <div class="box">
+    <h2>🎉 Feliz Aniversário! 🎉</h2>
+    <p>Parabéns, senhor idoso! posso desconfiar se você realmente não é um predador? akkakaka
+Que esse novo nível venha com menos dor nas costas e mais histórias boas pra contar.
+Que você continue sendo esse garoto incrível que eu conheci e gosto muito. Feliz vida! 🎉 🥳</p>
+
+    <!-- VÍDEO -->
+    <video id="videoParabens" src="video gato.mp4" controls autoplay muted></video>
+
+    <button onclick="closeLetter()">Fechar</button>
+  </div>
+</div>
+
+<script>
+// BANDEIRAS
+const phrase='FELIZ ANIVERSARIO ENRICO';
+const flags=document.getElementById('flags');
+phrase.split('').forEach(l=>{
+  const f=document.createElement('div');
+  f.className='flag';
+  f.textContent=l;
+  flags.appendChild(f);
+});
+
+// CONFETE
+function confetti(){
+  const c=document.createElement('div');
+  c.className='confetti';
+  c.style.left=Math.random()*100+'vw';
+  c.style.background=`hsl(${Math.random()*360},80%,70%)`;
+  c.style.animationDuration=(3+Math.random()*3)+'s';
+  document.body.appendChild(c);
+  setTimeout(()=>c.remove(),6000);
+}
+setInterval(confetti,150);
+
+// ABRIR CARTA E TOCAR MÚSICA
+function startParty(){
+  const letter = document.getElementById('letter');
+  letter.classList.add('show');
+
+  const cake = document.getElementById('cake');
+  cake.classList.add('pulse');
+
+  const music = document.getElementById('music');
+  music.currentTime = 0;
+  music.play().catch(()=>console.log("Clique necessário para áudio"));
+
+  const video = document.getElementById('videoParabens');
+  video.muted = false;
+  video.play().catch(()=>console.log("Clique necessário para vídeo"));
+}
+
+// FECHAR CARTA
+function closeLetter(){
+  const letter = document.getElementById('letter');
+  letter.classList.remove('show');
+
+  const cake = document.getElementById('cake');
+  cake.classList.remove('pulse');
+
+  const music = document.getElementById('music');
+  music.pause();
+  music.currentTime = 0;
+
+  const video = document.getElementById('videoParabens');
+  video.pause();
+  video.currentTime = 0;
+}
+</script>
+
+</body>
+</html>
